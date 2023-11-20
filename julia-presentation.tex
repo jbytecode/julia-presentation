@@ -264,5 +264,45 @@ Hall of Fame:
 
 
 
+\begin{frame}[fragile]{Clustering Multivariate Data}{kmedoids}
+	\begin{center}
+		\includegraphics[width=8cm]{images/kmedoids1.png}
+	\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Clustering Multivariate Data}{kmedoids}
+	\begin{center}
+		\includegraphics[width=8cm]{images/kmedoids2.png}
+	\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Clustering Multivariate Data}{Problem of Distance Matrices}
+\begin{lstlisting}
+using Clustering, Plots, Distances
+
+# data = Code for loading data...
+plt = scatter(data[:, 1], data[:, 2])
+
+dist = pairwise(euclidean, eachrow(data))
+
+result = kmedoids(dist, 2)
+centers = data[result.medoids, :];
+scatter!(centers[:, 1], centers[:, 2])
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{Clustering Multivariate Data}{Problem of Distance Matrices}
+\begin{lstlisting}
+dist = pairwise(euclidean, eachrow(data))
+\end{lstlisting}
+\begin{itemize}
+	\item A distance matrix holds the distance data of $ith$ and $jth$ points, e.g., $D(i, j) = D(j, i)$ due to the symmetry.
+	\item If data has $n$ rows then the distance matrix is in dimension of $n \times n$. 
+	\item Each distance is measured in 64-bits float numbers (\texttt{Float64}).
+	\item If $n$ is large, your machine will probably throw an \emph{Out of Memory} error!
+\end{itemize}
+\end{frame}
+
 
 \end{document}
