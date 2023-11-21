@@ -90,6 +90,45 @@ println("Hello, world")
 \end{frame}
 
 
+\begin{frame}[fragile]{Julia Programming Language}{Basics}
+Variables have types (Int, Float, Bool, String, etc.)
+\begin{lstlisting}
+julia> a = 3
+3
+julia> b = 3.14159265
+3.14159265
+julia> typeof(a)
+Int64
+julia> typeof(b)
+Float64
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Julia Programming Language}{Basics}
+Vectors and Matrices are first-class citizens (no need for external libs)
+\begin{lstlisting}
+julia> v = [1, 42, -8, 10]
+4-element Vector{Int64}:
+1
+42
+-8
+10
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{Julia Programming Language}{Basics}
+For loops are single threaded by design
+\begin{lstlisting}
+results = zeros(10)
+
+for i in 1:10
+	result[i] = dosomethingwith(i)
+end 
+\end{lstlisting}
+\end{frame}
+
+
 \begin{frame}[fragile]{Linear Regression}{The formulation}
 \begin{equation}
 y = \beta_0 + \beta_1 x + \varepsilon
