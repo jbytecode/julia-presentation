@@ -7,6 +7,8 @@
 \usepackage{amssymb}
 \usepackage{graphicx}
 \usepackage{listings}
+\usepackage{tikzsymbols}
+\usepackage{tikz-network}
 
 \definecolor{lbcolor}{rgb}{0.95,0.95,0.95}  
 \lstset{  
@@ -35,13 +37,21 @@
 \titlepage
 \end{frame}
 
+\begin{frame}[allowframebreaks]{Table of contents}
+	\tableofcontents[sections={1-3}]
+	\framebreak
+	\tableofcontents[sections={4-6}]
+	\framebreak
+	\tableofcontents[sections={7-9}]
+\end{frame}
+
 \begin{frame}[fragile]{Julia Programming Language}{julialang.org}
 	\begin{center}
 		\includegraphics[width=8cm]{images/thesite.png}
 	\end{center}
 \end{frame}
 
-
+\section{What is Julia}
 \begin{frame}[fragile]{Julia Programming Language}{High Performance Computing}
 \begin{itemize}
 	\item Julia was designed for high performance. Julia programs automatically compile to efficient native code via LLVM, and support multiple platforms (Windows, MacOS, Linux, etc.)\footnote{\url{https://julialang.org/}}.
@@ -70,12 +80,20 @@
 
 
 \begin{frame}[fragile]{Julia Programming Language}{First things first!}
+\begin{exampleblock}{helloworld.jl file}
 \begin{lstlisting}
-println("Hello, world")
+	println("Hello, world!")
 \end{lstlisting}
+\end{exampleblock}
+
+\begin{lstlisting}
+julia> include("helloworld.jl")
+Hello, world!
+\end{lstlisting}
+
 \end{frame}
 
-
+\subsection{The setup}
 \begin{frame}[fragile]{Julia Programming Language}{Welcome!}
 	\begin{center}
 			\includegraphics[width=10cm]{images/welcome.png}
@@ -89,7 +107,7 @@ println("Hello, world")
 	\end{center}
 \end{frame}
 
-
+\section{Language basics}
 \begin{frame}[fragile]{Julia Programming Language}{Basics}
 Variables have types (Int, Float, Bool, String, etc.)
 \begin{lstlisting}
@@ -104,6 +122,7 @@ Float64
 \end{lstlisting}
 \end{frame}
 
+\subsection{Vectors and Matrices}
 \begin{frame}[fragile]{Julia Programming Language}{Basics}
 Vectors and Matrices are first-class citizens (no need for external libs)
 \begin{lstlisting}
@@ -118,16 +137,160 @@ julia> v = [1, 42, -8, 10]
 
 
 \begin{frame}[fragile]{Julia Programming Language}{Basics}
+\begin{lstlisting}
+julia> m = zeros(5, 3)
+5x3 Matrix{Float64}:
+0.0  0.0  0.0
+0.0  0.0  0.0
+0.0  0.0  0.0
+0.0  0.0  0.0
+0.0  0.0  0.0
+
+julia> size(m)
+(5, 3)
+\end{lstlisting}
+\end{frame}
+
+\subsection{Importing Data}
+\begin{frame}[fragile]{Julia Programming Language}{Importing Data}
+\begin{lstlisting}
+using CSV, DataFrames
+
+mydata = CSV.read("data.csv", 
+				   delim = ";", 
+				   DataFrame)
+
+show(mydata)
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{Julia Programming Language}{Importing Data}
+\begin{lstlisting}
+julia> using Latexify
+julia> latexify(mydata, env = :table) |> println
+\end{lstlisting}
+
+\begin{tabular}{cc}
+$X$ & $ Y$\\
+$1$ & $2$\\
+$2$ & $4$\\
+$3$ & $5$\\
+$4$ & $-1$\\
+$5$ & $2$\\
+\end{tabular}
+
+\end{frame}
+
+
+\subsection{Flow Control}
+\begin{frame}[fragile]{Julia Programming Language}{if/elseif/else}
+\begin{lstlisting}
+function numberofrealroots(delta)
+	if delta > 0 
+		return 2
+	elseif delta == 0
+		return 1
+	else
+		return 0
+	end
+end  
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Julia Programming Language}{Pattern Matching}
+\begin{lstlisting}
+using Rematch
+
+function numberofrealroots(delta)
+    @match delta begin
+        x where x > 0  => 2
+        x where x == 0 => 1
+        _              => 0
+    end 
+end
+\end{lstlisting}
+\end{frame}
+
+
+
+\subsection{For Loops}
+\begin{frame}[fragile]{Julia Programming Language}{Basics}
 For loops are single threaded by design
 \begin{lstlisting}
 results = zeros(10)
 
 for i in 1:10
-	result[i] = dosomethingwith(i)
+	results[i] = dosomethingwith(i)
 end 
 \end{lstlisting}
 \end{frame}
 
+
+\subsection{Multi-threaded programming}
+\begin{frame}[fragile]{Julia Programming Language}{Basics}
+Using multiple threads\footnote{\#\> julia -t 10} 
+\begin{lstlisting}
+using Base.Threads
+
+results = zeros(10)
+	
+@threads for i in 1:10
+	results[i] = dosomethingwith(i)
+end 
+\end{lstlisting}
+\end{frame}
+
+
+\subsection{Functions}
+\begin{frame}[fragile]{Julia Programming Language}{Functions are first-class citizens}
+\begin{lstlisting}
+function apply(f, x)
+	return f(x)
+end 
+
+julia> apply(abs, -10)
+10
+\end{lstlisting}
+\end{frame}
+
+
+\subsection{Multiple Dispatch}
+\begin{frame}[fragile]{Julia Programming Language}{Multiple Dispatch}
+\begin{lstlisting}
+struct Point2D 
+	x::Float64
+	y::Float64
+end 
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{Julia Programming Language}{Multiple Dispatch}
+\begin{lstlisting}[basicstyle=\small]
+function Base.:+(p::Point2D, other::Point2D)::Point2D
+	Point2D(p.x + other.x, p.y + other.y)
+end 
+\end{lstlisting}
+\begin{lstlisting}
+julia> Point2D(1, 2) + Point2D(4, 5)
+Point2D(5.0, 7.0)
+\end{lstlisting}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Julia Programming Language}{Multiple Dispatch}
+\begin{lstlisting}[basicstyle=\small]
+function Base.:*(p::Point2D, other::Point2D)::Float64
+	return p.x * other.x + p.y * other.x
+end 
+\end{lstlisting}
+\begin{lstlisting}
+julia> Point2D(1, 2) * Point2D(4, 5)
+12.0
+\end{lstlisting}
+\end{frame}
 
 \begin{frame}[fragile]{Linear Regression}{The formulation}
 \begin{equation}
@@ -144,6 +307,7 @@ y = \beta_0 + \beta_1 x + \varepsilon
 \end{frame}
 
 
+\section{Linear Regression}
 \begin{frame}[fragile]{Linear Regression}{Sample Data}
 \begin{equation}
 X = \begin{bmatrix}
@@ -234,6 +398,7 @@ julia> GLM.r2(result)
 \end{frame}
 
 
+\section{Symbolic Regression}
 \begin{frame}[fragile]{XOR}{eXclusive OR}
 \begin{table}
 \centering
@@ -302,7 +467,7 @@ Hall of Fame:
 \end{frame}
 
 
-
+\section{Clustering Multivariate Data}
 \begin{frame}[fragile]{Clustering Multivariate Data}{kmedoids}
 	\begin{center}
 		\includegraphics[width=8cm]{images/kmedoids1.png}
@@ -330,7 +495,7 @@ scatter!(centers[:, 1], centers[:, 2])
 \end{lstlisting}
 \end{frame}
 
-
+\subsection{Problem of Big Distance Matrices}
 \begin{frame}[fragile]{Clustering Multivariate Data}{Problem of Distance Matrices}
 \begin{lstlisting}
 dist = pairwise(euclidean, eachrow(data))
@@ -343,5 +508,311 @@ dist = pairwise(euclidean, eachrow(data))
 \end{itemize}
 \end{frame}
 
+\subsection{On-demand Distance Matrix}
+\begin{frame}[fragile]{Big Distance Matrices}{On-demand Distance Matrix}
+\begin{lstlisting}[basicstyle=\tiny]
+struct OnDemandDistanceMatrix <: AbstractMatrix{Float64}
+	rawdata::Matrix
+end
+
+function Base.getindex(odm::OnDemandDistanceMatrix, i::Int, j::Int)::Float64
+	return euclidean(odm.rawdata[i, :], odm.rawdata[j, :])
+end 
+
+function Base.size(odm::OnDemandDistanceMatrix)
+	n, _ = size(odm.rawdata)
+	return (n, n)
+end 
+\end{lstlisting}
+\end{frame} 
+
+
+\begin{frame}[fragile]{Big Distance Matrices}{On-demand Distance Matrix}
+\begin{lstlisting}
+# Example 
+data = Float64[
+			1 2; 
+			0 5; 
+			1 2]
+
+d = OnDemandDistanceMatrix(data)
+
+println(d[1, 3])	
+\end{lstlisting}
+\end{frame} 
+
+
+\begin{frame}[fragile]{Big Distance Matrices}{On-demand Distance Matrix}
+\begin{lstlisting}
+data = Float64[
+		1 2; 
+		0 5; 
+		1 2]
+		
+d = OnDemandDistanceMatrix(data)
+		
+# d is a usual distance matrix now!
+kmedoids(d, 2)	
+\end{lstlisting}
+\end{frame} 
+
+
+\begin{frame}[fragile]{Big Distance Matrices}{On-demand Distance Matrix}
+\begin{itemize}
+	\item On-demand distance matrix costs zero memory
+	\item Caution: But it's really slow just because the requested distance is calculated on demand!
+	\item But it makes it possible! \Winkey
+\end{itemize}
+\end{frame} 
+
+\subsection{Memory-mapped IO for Big Matrices}
+\begin{frame}[fragile]{Big Matrices}{Memory Mapped IO}
+	\begin{itemize}
+		\item We need an efficient way to cope with big distance matrices 
+		\item Memory-mapped IO is an OS level solution to this problem
+		\item The content of a matrix is stored in files (on disk!)
+		\item Access to data is really fast \Cooley (contrast to the previous one!)
+	\end{itemize}
+\end{frame} 
+
+\begin{frame}[fragile]{Big Matrices}{Memory-mapped IO}
+\begin{lstlisting}
+import Mmap
+
+xio = open("/tmp/X.dat", "w+")
+yio = open("/tmp/y.dat", "w+")
+
+X = Mmap.mmap(xio, Matrix{Float64}, (n, 2))
+y = Mmap.mmap(yio, Vector{Float64}, n)		
+\end{lstlisting}
+\begin{itemize}
+	\item $X$ and $y$ are stored in files \texttt{X.dat} and \texttt{y.dat}
+	\item But they are stored in files and mapped to memory (RAM).
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]{Big Matrices}{Memory-mapped IO}
+$X$ and $y$ are processed and accessed as normal matrices and vectors
+\begin{lstlisting}
+X[1, :] = [1, 3]
+y[5] = 9.7
+betahats = inv(X'X)X'y
+\end{lstlisting}
+\end{frame}
+
+\section{Distributions and Plots}
+\begin{frame}[fragile]{Distributions}{The Normal Distribution}
+\begin{equation}
+f(x; \mu, \sigma) = \frac{1}{\sigma \sqrt{2\pi}} e^{-\frac{1}{2}\big(\frac{x - \mu}{\sigma}\big)^2}, \; -\infty < x < \infty
+\end{equation}
+
+\begin{equation}
+	f(x; 0, 1) = \frac{1}{\sqrt{2\pi}} e^{-\frac{1}{2}x^2}, \; -\infty < x < \infty
+\end{equation}
+\end{frame}
+
+\begin{frame}[fragile]{Distributions}{The Normal Distribution}
+\begin{lstlisting}
+julia> using Distributions
+
+julia> quantile(Normal(), 0.05/2)
+-1.9599639845400592
+
+julia> quantile(Normal(), 0.10/2)
+-1.6448536269514729
+
+julia> quantile(Normal(), 0.01/2)
+-2.5758293035489053
+\end{lstlisting}
+\end{frame}
+
+\subsection{Monte Carlo Simulations}
+\begin{frame}[fragile]{Distributions}{Monte Carlo Simulations - Drawing Random Numbers}
+\begin{lstlisting}
+julia> using Plots, Distributions
+julia> x = rand(Normal(), 1000000);
+julia> histogram(x)
+\end{lstlisting}
+\begin{center}
+\includegraphics[width=7cm]{images/histogram.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Distributions}{Monte Carlo Simulations - Drawing Random Numbers}
+	\begin{lstlisting}
+julia> histogram(abs.(x))
+	\end{lstlisting}
+	\begin{center}
+		\includegraphics[width=7cm]{images/hist-abs-x.png}
+	\end{center}
+\end{frame}
+
+
+\section{Numerical Integration}
+\begin{frame}[fragile]{Numerical Integration}{QuadGK}
+\begin{equation}
+\int_{-1}^{1} \frac{1}{\sqrt{2\pi}} e^{-\frac{1}{2}x^2} dx = ?
+\end{equation}
+\begin{lstlisting}
+using QuadGK
+
+function f(x)
+	return 1/sqrt(2pi) * exp(-0.5x^2)
+end 
+
+quadgk(f, -1.0, 1.0)
+\end{lstlisting}
+\end{frame}
+
+\section{Optimizations}
+
+\subsection{The Simple Neural Network}
+\begin{frame}[fragile]{Optimizations}{Simple Neural Network}
+\begin{center}
+$$
+H_1 = f(w_0 + x_1w_{11} + x_2w_{21})
+$$
+ \begin{tikzpicture}
+	\Vertex[x=0,y=0,color=green,label=X1]{X1} 
+	\Vertex[x=0,y=-2,color=green,label=X2]{X2}
+	\Vertex[x=3,y=0,color=yellow, label=H1]{H1}
+	 \Vertex[x=3,y=-3,color=yellow, label=H2]{H2}
+	\Vertex[x=6,y=-1,color=orange,label=Y]{Y} 
+	
+	\Edge[Math,label=w_{11}](X1)(H1)
+	\Edge[Math,label=w_{12}](X1)(H2)
+	\Edge[Math,label=w_{21}](X2)(H1)
+	\Edge[Math,label=w_{22}](X2)(H2)
+	\Edge[Math,label=w_{31}](H1)(Y)
+	\Edge[Math,label=w_{32}](H2)(Y)
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Optimizations}{Simple Neural Network}
+
+$$
+H_1 = f(w_{01} + x_1w_{11} + x_2w_{21})
+$$
+
+$$
+H_2 = f(w_{02} + x_1w_{12} + x_2w_{22})
+$$
+
+$$
+Y = f(w_{03} + w_{31}H_1 + w_{32}H_2)
+$$
+
+What are the values of $w_{ij}$'s that minimize the total network error?
+\end{frame}
+
+\begin{frame}[fragile]{Optimizations}{Simple Neural Network}
+\begin{lstlisting}[basicstyle=\tiny]
+function sigmoid(x)
+	return 1.0/(1.0 + exp(-x))
+end 
+
+function cost(w)
+	error = 0.0
+	for i in 1:4
+		H1 = sigmoid(w[1] + w[2]*x1[i] + w[3]*x2[i])
+		H2 = sigmoid(w[4] + w[5]*x1[i] + w[6]*x2[i])
+		yhat = sigmoid(w[7] + w[8] * H1 + w[9] * H2)
+		error += (yhat - y[i])^2
+	end 
+	return error 
+end 
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Optimizations}{Simple Neural Network}
+\begin{lstlisting}[basicstyle=\small]
+using Metaheuristics 
+
+x1 = [1, 1, 0, 0]
+x2 = [1, 0, 1, 0]
+y  = [0, 1, 1, 0]
+
+bounds = vcat([-10000.0 for i in 1:9]', 
+			  [10000.0 for i in 1:9]')
+
+result = Metaheuristics.optimize(cost, bounds, MCCGA())
+
+display(result)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Feeding the trained network}
+\begin{lstlisting}[basicstyle=\small]
+function forward(w)
+	yhat = zeros(length(y))
+	for i in 1:4
+		H1 = sigmoid(w[1] + w[2]*x1[i] + w[3]*x2[i])
+		H2 = sigmoid(w[4] + w[5]*x1[i] + w[6]*x2[i])
+		H3 = sigmoid(w[7] + w[8] * H1 + w[9] * H2)
+		yhat[i] = H3
+	end 
+	return yhat
+end 
+\end{lstlisting}
+\end{frame}
+
+\subsection{Mathematical Programming}
+\begin{frame}[fragile]{Optimizations}{Mathematical Programming}
+$$
+\begin{aligned}
+\max z = & 2x_1 + 3x_2 \\
+\text{Subject to:}\\
+& x_1 + 2x_2 \le 100 \\
+& 2x_1 + x_2 \le 150 \\
+& x_1, x_2 \ge 0
+\end{aligned}
+$$
+\end{frame}
+
+\begin{frame}[fragile]{Optimizations}{JuMP}
+\begin{lstlisting}[basicstyle=\small]
+using JuMP, HiGHS
+
+m = Model(HiGHS.Optimizer)
+
+@variable(m, x1 >= 0)
+@variable(m, x2 >= 0)
+
+@objective(m, Max, 2x1 + 3x2)
+
+@constraint(m, x1 + 2x2 <= 100)
+@constraint(m, 2x1 + x2 <= 150)
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{Optimizations}{JuMP}
+\begin{lstlisting}
+julia> optimize!(m)
+Solving LP without presolve or with basis
+Model   status      : Optimal
+Objective value     :  1.8333333333e+02
+HiGHS run time      :          0.00
+
+julia> value.([x1, x2])
+2-element Vector{Float64}:
+66.66666666666667
+16.666666666666657	
+\end{lstlisting}
+\end{frame}
+
+
+\section{Conclusion and Questions}
+\begin{frame}
+\begin{center}
+\includegraphics[width=1cm]{images/julia.png}
+
+Thank you!
+
+Any questions? \Coffeecup
+\end{center}
+\end{frame}
 
 \end{document}

@@ -1,7 +1,4 @@
-# Defines OnlineDistanceMatrix
-# OnlineDistanceMatrix does not pre-calculate distances.
-# Whenever a value is requested, it is calculated on-demand.
-struct OnlineDistanceMatrix <: AbstractMatrix{Float64}
+struct OnDemandDistanceMatrix <: AbstractMatrix{Float64}
     rawdata::Matrix
 end
 
@@ -13,17 +10,20 @@ function euclidean(u::Vector, v::Vector)::Real
     return sqrt(d)
 end 
 
-function Base.getindex(odm::OnlineDistanceMatrix, i::Int, j::Int)::Float64
+function Base.getindex(odm::OnDemandDistanceMatrix, i::Int, j::Int)::Float64
     return euclidean(odm.rawdata[i, :], odm.rawdata[j, :])
 end 
 
-function Base.size(odm::OnlineDistanceMatrix)
+function Base.size(odm::OnDemandDistanceMatrix)
     n, _ = size(odm.rawdata)
     return (n, n)
 end 
 
 
 
-
+# Example 
+data = Float64[1 2; 0 5; 1 2]
+d = OnDemandDistanceMatrix(data)
+println(d[1, 3])
 
 
