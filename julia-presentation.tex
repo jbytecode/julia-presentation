@@ -116,7 +116,7 @@ Float64
 \end{frame}
 
 \subsection{Vectors and Matrices}
-\begin{frame}[fragile]{Julia Programming Language}{Basics}
+\begin{frame}[fragile]{Julia Programming Language}{Vectors}
 Vectors and Matrices are first-class citizens (no need for external libs)
 \begin{lstlisting}
 julia> v = [1, 42, -8, 10]
@@ -129,7 +129,7 @@ julia> v = [1, 42, -8, 10]
 \end{frame}
 
 
-\begin{frame}[fragile]{Julia Programming Language}{Basics}
+\begin{frame}[fragile]{Julia Programming Language}{Matrices}
 \begin{lstlisting}
 julia> hcat(zeros(5), ones(5), 1:5, 5:(-1):1)
 5x4 Matrix{Float64}:
@@ -141,7 +141,7 @@ julia> hcat(zeros(5), ones(5), 1:5, 5:(-1):1)
 \end{lstlisting}
 \end{frame}
 
-\begin{frame}[fragile]{Julia Programming Language}{Basics}
+\begin{frame}[fragile]{Julia Programming Language}{Matrices}
 \begin{lstlisting}
 julia> m = zeros(5, 3)
 5x3 Matrix{Float64}:
@@ -233,7 +233,7 @@ end
 
 
 \subsection{For Loops}
-\begin{frame}[fragile]{Julia Programming Language}{Basics}
+\begin{frame}[fragile]{Julia Programming Language}{Loops}
 For loops are single threaded by design
 \begin{lstlisting}
 results = zeros(10)
@@ -246,7 +246,7 @@ end
 
 
 \subsection{Multi-threaded programming}
-\begin{frame}[fragile]{Julia Programming Language}{Basics}
+\begin{frame}[fragile]{Julia Programming Language}{Threads}
 Using multiple threads\footnote{\#\> julia -t 10} 
 \begin{lstlisting}
 using Base.Threads
@@ -256,6 +256,24 @@ results = zeros(10)
 @threads for i in 1:10
 	results[i] = dosomethingwith(i)
 end 
+\end{lstlisting}
+\end{frame}
+
+
+\subsection{Multi-threaded programming}
+\begin{frame}[fragile]{Julia Programming Language}{Distributed Programming}
+\begin{lstlisting}
+julia> using Distributed
+julia> addprocs(5);
+julia> pmap(abs, [1, 2, -5, 10, 100, -6])
+6-element Vector{Int64}:
+   1
+   2
+   5
+  10
+ 100
+   6
+
 \end{lstlisting}
 \end{frame}
 
