@@ -9,6 +9,7 @@
 \usepackage{listings}
 \usepackage{tikzsymbols}
 \usepackage{tikz-network}
+\usepackage{tikzlings}
 
 
 \definecolor{lbcolor}{rgb}{0.99,0.99,0.95}  
@@ -545,6 +546,18 @@ Hall of Fame:
 \end{lstlisting}
 \end{frame}
 
+\section{A Short Break}
+\begin{frame}[fragile]{}
+\begin{center}
+\Coffeecup[7] \\
+\vspace{1cm}
+{\huge
+\begin{quotation}
+one more cup of coffee?
+\end{quotation}
+} 
+\end{center}
+\end{frame}
 
 \section{Clustering Multivariate Data}
 \begin{frame}[fragile]{Clustering Multivariate Data}{kmedoids}
@@ -739,6 +752,44 @@ julia> histogram(abs.(x))
 	\begin{center}
 		\includegraphics[width=7cm]{images/hist-abs-x.png}
 	\end{center}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Hypothesis Tests}{Jarque-Bera Test for Normality}
+\begin{lstlisting}
+julia> using HypothesisTests
+julia> x = randn(30);
+julia> JarqueBeraTest(x)
+\end{lstlisting}
+
+The null hypothesis is a joint hypothesis of the skewness being $0$ and the kurtosis being $3$. 
+
+$$
+H_0: \text{Data comes from a Normal distribution}
+$$
+
+$$
+H_a: \text{\Cat}
+$$
+
+\end{frame}
+
+\begin{frame}[fragile]{Hypothesis Tests}{Jarque-Bera Test for Normality}
+\begin{lstlisting}[basicstyle=\small]
+Jarque-Bera normality test
+--------------------------
+Population details:
+    parameter of interest:   skewness and kurtosis
+    value under h_0:         "0 and 3"
+    point estimate:          "-0.065 and 1.873"
+Test summary:
+    outcome with 95% confidence: fail to reject h_0
+    one-sided p-value:           0.4474
+Details:
+    number of observations:         30
+    JB statistic:                   1.60881
+\end{lstlisting}
 \end{frame}
 
 
