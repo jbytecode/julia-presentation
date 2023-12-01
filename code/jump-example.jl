@@ -12,4 +12,4 @@ m = Model(HiGHS.Optimizer)
 
 optimize!(m)
 
-
+println(value.([x1, x2]))
