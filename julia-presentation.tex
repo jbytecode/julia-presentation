@@ -232,6 +232,28 @@ end
 \end{frame}
 
 
+\begin{frame}[fragile]{Julia Programming Language}{Sum Types a.k.a. tagged unions (just like enum in Rust)}
+\begin{lstlisting}[basicstyle=\tiny]
+using  SumTypes 
+
+@sum_type Expression begin
+    ConstantI64(::Int64)
+    Add(::Expression, ::Expression)
+end
+
+function eval(e::Expression) 
+    result = @cases e begin 
+        ConstantI64(i) => i 
+        Add(e1, e2)    => eval(e1) + eval(e2)
+        _              => error("Cannot understand :")
+    end 
+    return result
+end 
+
+eval(Add(ConstantI64(6), ConstantI64(5)))
+\end{lstlisting}
+\end{frame}
+
 
 \subsection{For Loops}
 \begin{frame}[fragile]{Julia Programming Language}{Loops}
