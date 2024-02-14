@@ -4,7 +4,7 @@
 
 - The release v1.1.0 is planned to be presented on Friday, February 23rd, in Akademik Bilişim Conference at Istanbul University
 
-## Table of content
+## Table of contents
 
 - The Julia web site
 - LLVM backend
