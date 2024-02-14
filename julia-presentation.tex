@@ -924,6 +924,34 @@ end
 \end{lstlisting}
 \end{frame}
 
+
+\begin{frame}[fragile]{Neural Networks with Flux.jl - The model}
+\begin{lstlisting}[basicstyle=\small]
+using Flux
+
+model = Chain(
+    Dense(2, 3, Flux.sigmoid),
+    Dense(3, 1, Flux.sigmoid)
+)
+
+loss_fn(x, y) = Flux.mse(model(x), y)
+
+opt = Flux.ADAM(0.1)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Neural Networks with Flux.jl - Training}
+\begin{lstlisting}[basicstyle=\small]
+for _ in 1:B
+   train!(loss_fn, params(model), [(X, y)], opt)
+end 
+
+# The Output:
+println(model(X))
+\end{lstlisting}
+\end{frame}
+
+
 \subsection{Mathematical Programming}
 \begin{frame}[fragile]{Optimizations}{Mathematical Programming}
 $$
