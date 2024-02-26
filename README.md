@@ -38,6 +38,8 @@
 - Neural Networks and Flux.jl
 - SQL integration
 - Calling R and Python, a.k.a., talking to strangers!
+- Calling C functions and callbacks
+
 
 
 
