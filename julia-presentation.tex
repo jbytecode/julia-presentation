@@ -1089,6 +1089,55 @@ julia> include("pycaller.jl")
 \end{lstlisting}
 \end{frame}
 
+\begin{frame}[fragile]{Talking to Strangers}{Calling C Functions}
+C Function for integrating single variable function
+\begin{lstlisting}[basicstyle=\tiny]
+typedef double (*F)(double);
+
+double integrate(F f, double a, double b, double eps){
+    
+    double start = a;
+    double mysum = 0.0;
+
+    while(start <= b){
+        mysum += f(start) * eps;
+        start += eps;
+    }
+    
+    return mysum;
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Talking to Strangers}{The Makefile}
+Generating dynamic link library in Linux
+\begin{lstlisting}
+integration.so: integration.c
+	cc -shared -o integration.so integration.c 
+
+clean: integration.so 
+	rm -f integration.so
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Talking to Strangers}{Integrating Julia function using C library}
+\begin{lstlisting}[basicstyle=\tiny]
+function normal(x::Cdouble)::Cdouble
+    return (1 / sqrt(2*pi)) * exp(-0.5 * x * x)
+end 
+
+normal_c = @cfunction(normal, Cdouble, (Cdouble,))
+
+function integrate(f, a, b, eps)
+    ccall((:integrate, "./integration.so"), Cdouble, 
+		  (Ptr{Cdouble}, Cdouble, Cdouble, Cdouble), f, a, b, eps)::Cdouble
+end 
+
+result = integrate(normal_c, -1.0, 1.0, 0.00001);
+
+println(result)
+\end{lstlisting}
+\end{frame}
 
 
 \section{Conclusion and Questions}
